@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossa Viagem a Guarapari ❤️</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* Variáveis de Cores e Fontes */
+        :root {
+            --cor-primaria: #d9534f;
+            --cor-secundaria: #0275d8;
+            --cor-texto: #333333;
+            --cor-fundo: #fdf6f2;
+            --cor-card: #ffffff;
+            --fonte-titulo: 'Playfair Display', serif;
+            --fonte-texto: 'Roboto', sans-serif;
+        }
+
+        /* Estilos Gerais */
+        body {
+            font-family: var(--fonte-texto);
+            background: linear-gradient(180deg, var(--cor-fundo), #f7e9e1);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-family: var(--fonte-titulo);
+            color: var(--cor-primaria);
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+
+        /* Estilos dos Cards */
+        .day-card {
+            background-color: var(--cor-card);
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #f0e6e0;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.4s ease-in-out;
+        }
+
+        /* Conteúdo Bloqueado */
+        .locked-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            transition: all 0.4s ease-in-out;
+        }
+        .locked-overlay .fa-lock {
+            font-size: 2.5em;
+            color: #cccccc;
+            margin-bottom: 15px;
+        }
+        .locked-overlay .day-title-locked {
+            font-family: var(--fonte-titulo);
+            color: #a0a0a0;
+            margin: 0;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        /* Conteúdo Desbloqueado */
+        .day-content {
+            padding: 0 30px 25px 30px;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.5s ease-in-out, opacity 0.3s ease, padding 0.5s ease;
+        }
+
+        /* Novo Cabeçalho Desbloqueado */
+        .unlocked-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-top: 25px;
+            border-bottom: 1px solid #f0e6e0;
+            padding-bottom: 20px;
+        }
+        .unlocked-day-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .unlocked-day-title .icon {
+            font-size: 1.8em;
+            color: var(--cor-primaria);
+        }
+        .unlocked-day-title h3 {
+            font-family: var(--fonte-titulo);
+            color: var(--cor-primaria);
+            font-size: 2.2em;
+            margin: 0;
+        }
+        .unlocked-subtitle {
+            font-family: var(--fonte-texto);
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #666;
+            margin: 8px 0 0 0;
+            line-height: 1.4;
+        }
+
+        .day-content p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .info-item .icon {
+            font-size: 1.1em;
+            color: var(--cor-secundaria);
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            padding-top: 2px;
+        }
+        .info-item .info-text {
+            flex: 1;
+        }
+
+        /* Lógica de Exibição */
+        .day-card:not(.locked) .locked-overlay {
+            display: none;
+        }
+        .day-card:not(.locked) .day-content {
+            max-height: 1000px;
+            opacity: 1;
+        }
+
+        /* Botões */
+        .button-container {
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .button.route { background-color: var(--cor-secundaria); }
+        .button.route:hover { background-color: #025aa5; box-shadow: 0 4px 10px rgba(2, 117, 216, 0.3); }
+        .button.recipe { background-color: var(--cor-primaria); }
+        .button.recipe:hover { background-color: #c9302c; box-shadow: 0 4px 10px rgba(217, 83, 79, 0.3); }
+
+        /* Modal (Janela de Receita) */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: slideIn 0.4s ease-out;
+        }
+        .modal-content h3 {
+            font-family: var(--fonte-titulo);
+            color: var(--cor-primaria);
+            font-size: 1.8em;
+            margin-top: 0;
+        }
+        .modal-content h4 {
+            font-family: var(--fonte-texto);
+            font-weight: bold;
+            color: #555;
+            border-left: 3px solid var(--cor-primaria);
+            padding-left: 10px;
+            margin-top: 20px;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Animações */
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+        @keyframes slideIn { from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Nossa Viagem a Guarapari ❤️</h1>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 1</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 1</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Chegada e Noite da Pizza</p>
+                </div>
+                <p>O início da nossa aventura! Após nos acomodarmos, preparei uma caminhada para sentirmos a energia do lugar.</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-sun"></i></span><div class="info-text"><strong>Fim de Tarde:</strong> Faremos uma caminhada relaxante no calçadão da Praia do Morro, que fica logo em frente.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-pizza-slice"></i></span><div class="info-text"><strong>Noite:</strong> Teremos nossa Noite da Pizza! Minha sugestão é a Pizzaria Don Rafaelle (Av. Praiana, 340).</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Pizzaria+Don+Rafaelle,+Guarapari+-+ES&travelmode=walking" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Pizzaria</a>
+                    <button onclick="openModal('pizza', event)" class="button recipe"><i class="fa-solid fa-utensils"></i> Receita de Pizza</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 2</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 2</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Praias Centrais e Areias Pretas</p>
+                </div>
+                <p>Hoje vamos explorar o coração de Guarapari e suas praias mais famosas.</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-umbrella-beach"></i></span><div class="info-text"><strong>Manhã/Tarde:</strong> Começaremos pela Praia das Castanheiras e seguiremos para a Praia da Areia Preta.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-car"></i></span><div class="info-text"><strong>Trajeto:</strong> Levaremos cerca de 10-15 minutos (3,5 km) até o Centro.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-bowl-food"></i></span><div class="info-text"><strong>Jantar:</strong> Para relaxar, teremos nossa noite do Strogonoff Vegetariano em casa.</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Praia+das+Castanheiras,+Guarapari+-+ES&travelmode=driving" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Centro</a>
+                    <button onclick="openModal('strogonoff', event)" class="button recipe"><i class="fa-solid fa-utensils"></i> Receita de Strogonoff</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 3</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 3</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Explorando a Enseada Azul</p>
+                </div>
+                <p>Prepare-se, amor! Hoje vamos conhecer um dos conjuntos de praias mais bonitos do Espírito Santo!</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-water"></i></span><div class="info-text"><strong>Manhã/Tarde:</strong> Nosso dia será para curtir as praias de Peracanga, Guaibura e Bacutia.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-car"></i></span><div class="info-text"><strong>Trajeto:</strong> O percurso até a Praia de Bacutia (a mais distante) leva de 15 a 20 minutos (8 km).</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-martini-glass"></i></span><div class="info-text"><strong>Noite:</strong> O jantar é livre. Os quiosques de Peracanga são uma ótima pedida para um petisco.</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Praia+de+Bacutia,+Guarapari+-+ES&travelmode=driving" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Enseada Azul</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 4</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 4</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Passeio de Escuna e Noite do Macarrão</p>
+                </div>
+                <p>Hoje veremos a cidade por um novo ângulo: o mar!</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-anchor"></i></span><div class="info-text"><strong>Passeio de Escuna:</strong> Os passeios geralmente saem do final da Praia do Morro, perto do Morro da Pescaria.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-person-walking"></i></span><div class="info-text"><strong>Trajeto:</strong> Faremos uma caminhada tranquila de 25 minutos (2 km) pela orla.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-plate-wheat"></i></span><div class="info-text"><strong>Noite:</strong> Preparei para nós a Noite do Macarrão em casa.</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Morro+da+Pescaria,+Guarapari+-+ES&travelmode=walking" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Escuna</a>
+                    <button onclick="openModal('macarrao', event)" class="button recipe"><i class="fa-solid fa-utensils"></i> Receita de Macarrão</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 5</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 5</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Setiba e a Lagoa Mágica</p>
+                </div>
+                <p>Nosso dia será de natureza exuberante, onde conheceremos Setiba e o Parque Estadual Paulo César Vinha.</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-tree"></i></span><div class="info-text"><strong>Passeio:</strong> Vamos conhecer a Praia de Setiba e o Parque Estadual.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-car"></i></span><div class="info-text"><strong>Trajeto:</strong> O percurso até a Praia de Setiba dura cerca de 20-25 minutos (11 km).</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Praia+de+Setiba,+Guarapari+-+ES&travelmode=driving" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota para Setiba</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 6</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 6</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Dia Livre e Noite do Risoto</p>
+                </div>
+                <p>Separei este dia para relaxarmos ou, se preferir, explorarmos um cantinho especial com uma vista incrível.</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-mountain-sun"></i></span><div class="info-text"><strong>Sugestão de Passeio:</strong> Visitar o Morro da Pescaria. A trilha é leve e a vista será nossa recompensa!</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-utensils"></i></span><div class="info-text"><strong>Noite:</strong> Para um jantar romântico, teremos nossa Noite do Risoto em casa.</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Morro+da+Pescaria,+Guarapari+-+ES&travelmode=walking" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Morro da Pescaria</a>
+                    <button onclick="openModal('risoto', event)" class="button recipe"><i class="fa-solid fa-utensils"></i> Receita de Risoto</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 7</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 7</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Três Praias e Jantar no Canecão</p>
+                </div>
+                <p>Hoje teremos um trio de praias charmosas e um jantar especial em um local com história para nós.</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-water"></i></span><div class="info-text"><strong>Passeio:</strong> Vamos visitar a região das Três Praias. O acesso é rápido (10-15 min) e bem sinalizado.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-utensils"></i></span><div class="info-text"><strong>Noite:</strong> Vamos jantar no famoso Restaurante Canecão, ao lado de onde estamos!</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Três+Praias,+Guarapari+-+ES&travelmode=driving" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Três Praias</a>
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Restaurante+Canecão,+Guarapari+-+ES&travelmode=walking" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Canecão</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 8</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 8</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Charme de Meaípe e Moqueca Capixaba</p>
+                </div>
+                <p>Hoje vamos conhecer a charmosa vila de pescadores de Meaípe e provar a iguaria local!</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-house-tsunami"></i></span><div class="info-text"><strong>Passeio:</strong> Conhecer a vila e a praia de Meaípe. O trajeto leva de 20 a 25 minutos (12 km).</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-shrimp"></i></span><div class="info-text"><strong>Noite:</strong> Jantar especial para provar a autêntica moqueca. Sugestão: Restaurantes Gaeta ou Curuca.</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Meaípe,+Guarapari+-+ES&travelmode=driving" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Meaípe</a>
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Restaurante+Gaeta,+Meaípe,+Guarapari+-+ES&travelmode=driving" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Restaurantes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 9</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 9</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Tesouro Escondido e Noite Aconchegante</p>
+                </div>
+                <p>Hoje vamos descobrir um pequeno paraíso acessível por uma escadaria e terminar o dia com um jantar que abraça.</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-gem"></i></span><div class="info-text"><strong>Passeio:</strong> Conhecer a Praia dos Padres. O trajeto é de 15-20 minutos (8,5 km).</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-circle-info"></i></span><div class="info-text"><strong>Acesso:</strong> Fica entre Bacutia e Enseada Azul. Estacione nas proximidades e desça a escadaria.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-bowl-food"></i></span><div class="info-text"><strong>Noite:</strong> Para uma noite tranquila, teremos nossa Noite do Caldo Verde em casa.</div></div>
+                <div class="button-container">
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=Av.+Beira+Mar,+Praia+do+Morro,+Guarapari+-+ES&destination=Praia+dos+Padres,+Guarapari+-+ES&travelmode=driving" target="_blank" class="button route"><i class="fa-solid fa-map-location-dot"></i> Rota Praia dos Padres</a>
+                    <button onclick="openModal('caldoVerde', event)" class="button recipe"><i class="fa-solid fa-utensils"></i> Receita de Caldo Verde</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 10</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 10</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Despedida do Mar</p>
+                </div>
+                <p>Um dia para revisitarmos nossos lugares favoritos ou descobrirmos as artes locais.</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-heart"></i></span><div class="info-text"><strong>Dia todo:</strong> Voltar à praia que mais gostamos ou explorar a feirinha de artesanato da Praia do Morro.</div></div>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-utensils"></i></span><div class="info-text"><strong>Noite:</strong> Nosso jantar de despedida.</div></div>
+            </div>
+        </div>
+
+        <div class="day-card locked" onclick="toggleLock(this)">
+            <div class="locked-overlay"><i class="fa-solid fa-lock"></i><h2 class="day-title-locked">Dia 11</h2></div>
+            <div class="day-content">
+                <div class="unlocked-header">
+                    <div class="unlocked-day-title">
+                        <i class="fa-solid fa-calendar-day icon"></i>
+                        <h3>Dia 11</h3>
+                    </div>
+                    <p class="unlocked-subtitle">Café da Manhã e Retorno</p>
+                </div>
+                <p>Nosso último café da manhã com vista para o mar antes de pegarmos a estrada.</p>
+                <div class="info-item"><span class="icon"><i class="fa-solid fa-mug-saucer"></i></span><div class="info-text"><strong>Manhã:</strong> Tomar um café da manhã especial numa das padarias da Praia do Morro e nos preparar para a viagem de volta.</div></div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div id="recipeModal" class="modal-backdrop">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="recipe-details">
+                </div>
+        </div>
+    </div>
+
+<script>
+    /**
+     * Alterna o estado de um card de "bloqueado" para "desbloqueado".
+     */
+    function toggleLock(element) {
+        if (element.classList.contains('locked')) {
+            element.classList.remove('locked');
+        }
+    }
+
+    // ===================================================================
+    // ATUALIZAÇÃO AQUI: A estrutura de "ingredients" também mudou para um array.
+    // ===================================================================
+    const recipes = {
+        pizza: {
+            title: "Pizza Caseira Simples",
+            ingredients: [ // <-- Agora é um array!
+                "Massa de pizza pronta (ou caseira)",
+                "Molho de tomate",
+                "Queijo mozzarella",
+                "Orégãos",
+                "Ingredientes a gosto (cogumelos, pimentos, azeitonas)"
+            ],
+            instructions: [
+                "Pré-aqueça o forno a 220°C.",
+                "Abra a massa numa forma.",
+                "Espalhe o molho de tomate, cubra com queijo e os outros ingredientes.",
+                "Polvilhe com orégãos.",
+                "Leve ao forno por 15-20 minutos ou até o queijo derreter e a massa dourar."
+            ]
+        },
+        strogonoff: {
+            title: "Strogonoff de Palmito",
+            ingredients: [
+                "1 vidro de palmito picado",
+                "1 cebola picada",
+                "2 dentes de alho",
+                "1 lata de tomate pelado",
+                "1/2 chávena de ketchup",
+                "1/4 chávena de mostarda",
+                "1 caixa de natas (creme de leite)",
+                "Azeite, sal e pimenta a gosto"
+            ],
+            instructions: [
+                "Refogue a cebola e o alho no azeite.",
+                "Adicione o tomate pelado e cozinhe por 5 minutos.",
+                "Acrescente o palmito, ketchup e mostarda. Tempere com sal e pimenta.",
+                "Deixe apurar por mais 10 minutos.",
+                "Desligue o fogo e incorpore as natas. Sirva com arroz e batata palha."
+            ]
+        },
+        macarrao: {
+            title: "Macarrão à Carbonara",
+            ingredients: [
+                "200g de esparguete",
+                "100g de bacon ou pancetta em cubos",
+                "2 gemas de ovo",
+                "50g de queijo Pecorino ou Parmesão ralado",
+                "Pimenta preta moída na hora",
+                "Sal a gosto"
+            ],
+            instructions: [
+                "Cozinhe o esparguete em água com sal até ficar 'al dente'.",
+                "Enquanto isso, frite o bacon numa frigideira até ficar crocante. Desligue o fogo e reserve.",
+                "Numa tigela, bata as gemas com o queijo ralado e uma boa quantidade de pimenta preta.",
+                "Escorra o macarrão (reserve uma concha da água do cozimento) e coloque-o na frigideira com o bacon.",
+                "Verta a mistura de gemas sobre o macarrão quente, mexendo rapidamente para criar um creme. Se necessário, adicione um pouco da água do cozimento para atingir a cremosidade desejada.",
+                "Sirva imediatamente."
+            ]
+        },
+        risoto: {
+            title: "Risoto de Cogumelos",
+            ingredients: [
+                "1 chávena de arroz arbóreo",
+                "200g de cogumelos frescos (Paris ou Portobello)",
+                "1/2 cebola picada",
+                "1 litro de caldo de legumes quente",
+                "1/2 chávena de vinho branco seco",
+                "2 colheres de sopa de manteiga",
+                "Queijo parmesão ralado a gosto",
+                "Sal e pimenta a gosto"
+            ],
+            instructions: [
+                "Numa panela, derreta metade da manteiga e refogue a cebola.",
+                "Adicione os cogumelos fatiados e cozinhe até dourarem. Retire e reserve.",
+                "Na mesma panela, adicione o arroz e frite por 1 minuto.",
+                "Acrescente o vinho e mexa até evaporar.",
+                "Adicione uma concha do caldo quente e mexa até o arroz absorver. Repita o processo, concha por concha, até o arroz estar 'al dente'.",
+                "Junte os cogumelos, o resto da manteiga e o queijo parmesão. Misture bem e sirva."
+            ]
+        },
+        caldoVerde: {
+            title: "Caldo Verde Aconchegante",
+            ingredients: [
+                "500g de batata",
+                "1 chouriço de boa qualidade",
+                "1 molho de couve cortada em tiras finas",
+                "1 cebola média",
+                "2 dentes de alho",
+                "Azeite, sal e pimenta a gosto"
+            ],
+            instructions: [
+                "Cozinhe as batatas, a cebola e o alho em água e sal. Quando estiverem bem macias, bata tudo no liquidificador (ou com mixer) para formar um creme.",
+                "Leve o creme de volta à panela. Fatie o chouriço em rodelas finas e adicione ao caldo, deixando cozinhar por cerca de 10 minutos para libertar o sabor.",
+                "Adicione a couve fatiada e cozinhe por mais 3-5 minutos, apenas até a couve amaciar, mas sem perder a cor viva.",
+                "Sirva quente, regado com um fio de azeite."
+            ]
+        }
+    };
+
+    /**
+     * Abre o modal com os detalhes da receita.
+     */
+    function openModal(recipeType, event) {
+        event.stopPropagation(); 
+
+        const modal = document.getElementById('recipeModal');
+        const recipeDetailsContainer = document.getElementById('recipe-details');
+        const recipe = recipes[recipeType];
+
+        if (recipe) {
+            // ===================================================================
+            // ATUALIZAÇÃO AQUI: Criamos a lista de ingredientes e de passos.
+            // ===================================================================
+            
+            // 1. Mapeia cada ingrediente para um item de lista <li>
+            const ingredientsHtml = recipe.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('');
+
+            // 2. Mapeia cada passo da instrução para um item de lista <li>
+            const stepsHtml = recipe.instructions.map(step => `<li>${step}</li>`).join('');
+
+            // 3. Insere o conteúdo no modal, usando <ul> para ingredientes e <ol> para passos.
+            recipeDetailsContainer.innerHTML = `
+                <h3>${recipe.title}</h3>
+                <h4>Ingredientes</h4>
+                <ul>${ingredientsHtml}</ul>
+                <h4>Modo de Preparo</h4>
+                <ol>${stepsHtml}</ol> 
+            `;
+            modal.style.display = 'block';
+        }
+    }
+
+    // Lógica para fechar o modal
+    const modal = document.getElementById('recipeModal');
+    const closeBtn = document.querySelector('.close-button');
+
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
